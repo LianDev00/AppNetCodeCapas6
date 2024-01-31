@@ -1,1 +1,1 @@
-# NET CORE 6 MVC_ude
+# NET CORE 6 MVC

@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Medicamentos</h1>
+
+<!-- Button trigger modal -->
+@* <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="CallbackEditar(0)">Nuevo</button> *@
+
+@* <fieldset>
+    <legend>Busqueda Medicamento</legend>
+    <form id="frmBusquedaMedicamento" method="post" class="mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <label>Id Medicamento</label>
+                <input type="number" class="form-control" name="iidmedicamento"/>
+            </div>
+            <div class="col-md-6">
+                <label>Nombre Medicamento</label>
+                <input type="text" class="form-control" name="nombremedicamento" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <label>Nombre Laboratorio</label>
+                <select class="form-control" name="iidlaboratorio" id="cboLaboratorioBusqueda">
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label>Nombre Tipo Medicamento</label>
+                <select class="form-control" name="iidtipomedicamento" id="cboTipoMedicamentoBusqueda">   
+                </select>
+            </div>
+        </div>
+    </form>
+    <button class="btn btn-primary" onclick="BuscarDatos()">Buscar</button>
+    <button class="btn btn-danger" onclick="LimpiarMedicamento()">Limpiar</button>
+</fieldset> *@
+
+<div id="divContenedor">
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lbltitulo"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmGuardarMedicamento" method="post" class="mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Id Medicamento</label>
+                            <input type="text" class="form-control" readonly name="iidmedicamento" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Codigo</label>
+                            <input type="text" class="form-control" name="codigomedicamento" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control ob" name="nombremedicamento" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Laboratorio</label>
+                            <select id="cboLaboratorioGuardar" class="form-control ob" name="iidlaboratorio"></select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Tipo Medicamento</label>
+                            <select id="cboTipoMedicamentoGuardar" class="form-control" name="iidtipomedicamento ob"></select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Uso</label>
+                            <input type="text" class="form-control slcenb" name="usomedicamento" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Contenido</label>
+                            <input type="text" class="form-control slcenbn" name="contenidomedicamento" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCerrarModal" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="GuardarDatos()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+<script src="~/js/bootstrap.js"></script>
+<script src="~/js/medicamento.js"></script>

@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index Tipo Medicamento</h1>
+
+<fieldset>
+    <legend>Datos del Tipo Medicamento</legend>
+    <form method="post" id="frmGuardarTipoMedicamento" class="mb-3">
+        <div class="row">
+            <div class="col-md-6">
+                <label>Id Tipo Medicamento</label>
+                <input type="text" readonly name="iidtipomedicamento" class="form-control"/>
+            </div>
+            <div class="col-md-6">
+                <label>Nombre</label>
+                <input type="text" name="nombre" class="form-control ob max-100 min-5 sl" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label>Descripcion</label>
+                <textarea name="descripcion" class="form-control ob max-250 min-20 slcenbn"></textarea>
+            </div>
+        </div>
+    </form>
+    <button class="btn btn-primary" onclick="GuardarDatos()">Guardar</button>
+    <button class="btn btn-danger" onclick="LimpiarMedicamento()">Limpiar</button>
+</fieldset>
+
+<div class="input-group mb-3">
+    <input type="text" class="form-control" placeholder="Ingrese Tipo de Medicamento" id="txtnombrebusqueda" onkeyup="filtrarTipoMedicamento()"/>
+</div>
+
+<div id="divTabla">
+   
+</div>
+
+<script src="~/js/sweetalert.js"></script>
+<script src="~/js/generic.js"></script>
+<script src="~/js/tipomedicamento.js"></script>

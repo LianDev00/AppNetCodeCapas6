@@ -14,14 +14,20 @@ namespace AppNetCodeCapas6.Controllers
 
         public int guardarTipoAdministracion(TipoAdministracionCLS oTipoAdministracionCLS)
         {
-            TipoAdministracionBL obj = new TipoAdministracionBL();
+            TipoAdministracionDAL obj = new TipoAdministracionDAL();
             return obj.guardarTipoAdministracion(oTipoAdministracionCLS);
         }
 
         public List<TipoAdministracionCLS> listarTipoAdministracion()
         {
-            TipoAdministracionBL obj = new TipoAdministracionBL();
+            TipoAdministracionDAL obj = new TipoAdministracionDAL();
             return obj.listarTipoAdministracion();
+        }
+
+        public int EliminarTipoAdministracion(int id)
+        {
+            TipoAdministracionDAL obj = new TipoAdministracionDAL();
+            return obj.EliminarTipoAdministracion(id);
         }
     }
 }

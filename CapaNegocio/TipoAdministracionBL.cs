@@ -21,5 +21,11 @@ namespace CapaNegocio
             TipoAdministracionDAL obj = new TipoAdministracionDAL();
             return obj.listarTipoAdministracion();
         }
+
+        public int EliminarTipoAdministracion(int id)
+        {
+            TipoAdministracionDAL obj = new TipoAdministracionDAL();
+            return obj.EliminarTipoAdministracion(id);
+        }
     }
 }

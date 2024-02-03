@@ -11,7 +11,7 @@ namespace CapaDatos
 {
     public class TipoAdministracionDAL:CadenaDAL
     {
-        public int guardarTipoAdministracion(TipoAdministracionCLS oTipoAdministracionCLS)
+        public int EliminarTipoAdministracion(int id)
         {
             // 0 indica error
             int rpta = 0;
@@ -20,13 +20,12 @@ namespace CapaDatos
                 try
                 {
                     cn.Open();
-                    using (SqlCommand cmd = new SqlCommand("uspGuardarTipoAdministracion", cn))
+                    // Eliminacion Fisica
+                    using (SqlCommand cmd = new SqlCommand("uspEliminarTipoAdministracion", cn))
                     {
-                        //Indico que es un StoredProcedure SQL
+                        //Indico que es consulta SQL
                         cmd.CommandType = CommandType.StoredProcedure;
-                        cmd.Parameters.AddWithValue("@iidtipoadministracion", oTipoAdministracionCLS.iidtipoadministracion);
-                        cmd.Parameters.AddWithValue("@nombre", oTipoAdministracionCLS.nombre);
-                        cmd.Parameters.AddWithValue("@descripcion", oTipoAdministracionCLS.descripcion);
+                        cmd.Parameters.AddWithValue("@iidtipoadministracion", id);
                         //Insert , Update y Delete (El numero de filas afectadas)
                         rpta = cmd.ExecuteNonQuery();
                         //Si es 1 es que es Ok , si es 0 es que no se realizo
@@ -38,6 +37,50 @@ namespace CapaDatos
                 }
             }
             return rpta;
+        }
+
+        public int guardarTipoAdministracion(TipoAdministracionCLS oTipoAdministracionCLS)
+        {
+            // 0 indica error
+            int rpta = 0;
+            using (SqlConnection cn = new SqlConnection(cadena))
+            {
+                try
+                {
+                    cn.Open();
+                    using (SqlCommand cmd = new SqlCommand("uspGuardarTipoAdministracion", cn))
+                    {
+                        //Indico que es Procedure
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@iidtipoadministracion", oTipoAdministracionCLS.iidtipoadministracion);
+                        cmd.Parameters.AddWithValue("@nombre", oTipoAdministracionCLS.nombre);
+                        cmd.Parameters.AddWithValue("@descripcion", oTipoAdministracionCLS.descripcion);
+                        SqlParameter parametro = null;
+                        if (oTipoAdministracionCLS.iidtipoadministracion == 0)
+                        {
+                            parametro = cmd.Parameters.Add("@@identity", SqlDbType.Int);
+                            parametro.Direction = ParameterDirection.ReturnValue;
+                        }
+                        //Insert , Update y Delete (El numero de filas afectadas)
+                        rpta = cmd.ExecuteNonQuery();
+                        if (rpta == 1 && oTipoAdministracionCLS.iidtipoadministracion == 0)
+                        {
+                            //Obtiene el Id que se genera al insertar
+                            rpta = (int)parametro.Value;
+                        }
+                        //Si es 1 es que es Ok , si es 0 es que no se realizo
+                    }
+                }
+                catch (Exception ex)
+                {
+                    cn.Close();
+                    rpta = 0;
+                }
+
+
+            }
+            return rpta;
+
         }
 
         public List<TipoAdministracionCLS> listarTipoAdministracion()

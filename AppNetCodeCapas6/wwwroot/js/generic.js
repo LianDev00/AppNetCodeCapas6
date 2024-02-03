@@ -158,10 +158,14 @@ async function fetchPost(url, tiporespuesta, frm, callback) {
             res = await res.text();
         // JSON(Object)
         callback(res)
+        //console.log(e)
+        console.log(res)
         document.getElementById("divLoading").style.display = "none";
     } catch (e) {
         // alert("Ocurrio un error")
         document.getElementById("divLoading").style.display = "none";
+        console.log(e)
+        console.log(res)
     }
 }
 
@@ -379,13 +383,13 @@ function AgregarFila(tabla) {
     var contenido = "<tr>";
     for (var i = 0; i < propiedadesTabla.length; i++) {
         propiedadActual = propiedadesTabla[i];
-        contenido += "<td>";
-        contenido += `<input ${columnaReadOnly.includes(propiedadActual)?'readonly':''} class='form-control' type='text' />`
+        contenido += "<td ondblclick='clickcelda(this)'>";
+        contenido += `<input ${columnaReadOnly.includes(propiedadActual) ? 'readonly' : ''} class='form-control' type='text' />`
         contenido += "</td>";
     }
     contenido += `<td>
          <button class='btn btn-danger' onclick='EliminarFila(this)'>Eliminar</button>
-         <button class='btn btn-success'>Guardar</button>
+         <button class='btn btn-success' onclick="GuardarElementos(this)">Guardar</button>
          </td>`
     contenido += "</tr>";
     objtbody.insertAdjacentHTML("beforeend", contenido);
@@ -454,19 +458,23 @@ function pintar(objConfiguracion, objBusqueda) {
 }
 
 function clickcelda(td) {
-    var valor = td.getAttribute("data-valor")
+    var valor = td.getAttribute("data-valor");
     td.innerHTML = "";
     td.insertAdjacentHTML("beforeend", `
-        <input class='form-control' value='${valor}'/>
-    `)
+     <input class='form-control' value='${valor}' />
+     `)
+
     var trfila = td.parentNode;
     var tdultimo = trfila.lastChild;
-    if (tdultimo.children.length == 0) {
-        tdultimo.insertAdjacentHTML("beforeend", `
-        <button onclick='GuardarElementos(this)' class='btn btn-success'>Guardar</button>
-        <button onclick='Cancelar(this)' class='btn btn-danger'>Cancelar</button>
-    `)
-    }
+    tdultimo.setAttribute("data-botones", tdultimo.innerHTML);
+    tdultimo.innerHTML = "";
+    // if (tdultimo.children.length == 0) {
+    tdultimo.insertAdjacentHTML("beforeend", `
+            <button class='btn btn-success' onclick='GuardarElementos(this)' >Guardar</button>
+            <button onclick='Cancelar(this)' class='btn btn-danger'  >Cancelar</button>
+        `);
+    //}
+
 }
 
 function GuardarElementos(btn) {
@@ -496,17 +504,25 @@ function GuardarElementos(btn) {
     }
     Confirmacion(undefined, undefined, function (rpta) {
         fetchPost(urlGuardar, "text", frm, function (data) {
-            if (data == "1") {
+            if (data != "0") {
+                var tdUltimo = trActual.lastChild;
+                var botones = tdUltimo.getAttribute("data-botones");
+                tdUltimo.innerHTML = botones;
+                tdUltimo.setAttribute("data-botones", "");
+                if (valores[0] == "") {
+                    valores[0] = data;
+                }
                 Exito("Se actualizo correctamente");
                 for (var i = 0; i < nhijos - 1; i++) {
                     elementoActual = trActual.children[i];
                     elementoActual.setAttribute("data-valor", valores[i])
                     elementoActual.innerHTML = valores[i];
                 }
-                trActual.lastChild.innerHTML = "";
+                //trActual.lastChild.innerHTML = "";
             } else Incorrecto();
         })
     })
+
     // return valores;
 }
 
@@ -521,6 +537,10 @@ function Cancelar(btn) {
         // Texto
         obj.innerHTML = obj.getAttribute("data-valor");
     }
+    var tdUltimo = trActual.lastChild
+    var botones = tdUltimo.getAttribute("data-botones");
+    tdUltimo.innerHTML = botones;
+    tdUltimo.setAttribute("data-botones", "");
 }
 
 function generarTabla(res) {
@@ -529,7 +549,7 @@ function generarTabla(res) {
     var cabeceras = objConfiguracionGlobal.cabeceras;
     //: ["idtipomedicamento", "nombre","descripcion"]
     var nombrepropiedades = objConfiguracionGlobal.propiedades;
-    contenido += "<table id='" + objConfiguracionGlobal.idtabla + "' class='table'>";
+    contenido += "<table id='" + objConfiguracionGlobal.idtabla + "'class='table'>";
     contenido += "<thead>";
     contenido += "<tr>";
     for (var i = 0; i < cabeceras.length; i++) {

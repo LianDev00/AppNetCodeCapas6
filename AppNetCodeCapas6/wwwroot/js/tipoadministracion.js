@@ -7,7 +7,10 @@ function listarTipoAdministracion() {
     objTipoAdministracion = {
         type: "edit",
         agregar:true,
-        urlguardar:"TipoAdministracion/guardarTipoAdministracion",
+        urlguardar: "TipoAdministracion/guardarTipoAdministracion",
+        urlEliminar: "TipoAdministracion/EliminarTipoAdministracion",
+        confimacionEliminar: "Desea eliminar el Tipo Administracion?",
+        nombreParametroEliminar:"id",
         columnreadonly: ["iidtipoadministracion"],
         url: "TipoAdministracion/listarTipoAdministracion",
         cabeceras: ["Id Tipo Administracion", "Nombre", "Descripcion"],
@@ -22,13 +25,13 @@ function listarTipoAdministracion() {
 //    console.log(obj)
 //}
 
-function Eliminar(id) {
-    Confirmacion(undefined, "Desea eliminar el tipo medicamento?", function () {
-        fetchGet("TipoAdministracion/EliminarTipoAdministracion/?id=" + id, "text", function (data) {
-            if (data == "1") {
-                Exito("Se elimino correctamente");
-                listarTipoAdministracion();
-            } else Incorrecto();
-        });
-    });
-}
+//function Eliminar(id) {
+//    Confirmacion(undefined, "Desea eliminar el tipo medicamento?", function () {
+//        fetchGet("TipoAdministracion/EliminarTipoAdministracion/?id=" + id, "text", function (data) {
+//            if (data == "1") {
+//                Exito("Se elimino correctamente");
+//                listarTipoAdministracion();
+//            } else Incorrecto();
+//        });
+//    });
+//}

@@ -101,17 +101,27 @@ function LimpiarDatos(idformulario) {
     for (var i = 0; i < elementosName.length; i++) {
         elementoActual = elementosName[i]
         elementoName = elementoActual.name;
-        // Combo
-        if (elementoActual.tagName.toLocaleUpperCase() == "SELECT") {
+        //Combo
+        if (elementoActual.tagName.toUpperCase() == "SELECT") {
             document.getElementById(elementoActual.id).selectedIndex = 0;
         }
-        // Imagen
-        else if(elementoActual.tagName.toUpperCase() == "IMG"){
-            setSRC(elementoName, "", idformulario);
+        else if (elementoActual.tagName.toUpperCase() == "IMG") {
+            setSRC(elementoName, "", idformulario)
         }
-        else {
+        else if ((elementoActual.tagName.toUpperCase() == "INPUT" && elementoActual.type.toUpperCase() != "RADIO")
+            || (elementoActual.tagName.toUpperCase() == "TEXTAREA")) {
+            //INPUE
             setN(elementoName, "", idformulario);
         }
+
+    }
+    //Radio Button (Selector CSS)
+    var radios = document.querySelectorAll("#" + idformulario + " [type*='radio']");
+    for (var i = 0; i < radios.length; i++) {
+        radios[i].checked = false;
+    }
+    for (var i = 0; i < idradios.length; i++) {
+        document.getElementById(idradios[i]).checked = true;
     }
 }
 
@@ -601,7 +611,7 @@ function generarTabla(res) {
             }
             if (objConfiguracionGlobal.eliminar == true) {
                 contenido += `
-             <i onclick="Eliminar(${obj[propiedadId]})" class="btn btn-danger"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
+             <i onclick="CallbackEliminar(${obj[propiedadId]})" class="btn btn-danger"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                   class="bi bi-trash-fill" viewBox="0 0 16 16">
                  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
                         </svg></i>
@@ -617,6 +627,31 @@ function generarTabla(res) {
     contenido += "</tbody>"
     contenido += "</table>";
     return contenido;
+}
+
+function CallbackEliminar(id) {
+    if (objConfiguracionGlobal.urlEliminar == undefined) {
+        Eliminar(id)
+    }
+    else {
+        if (objConfiguracionGlobal.nombreParametroEliminar == undefined) {
+            objConfiguracionGlobal.nombreParametroEliminar = "id"
+        }
+        if (objConfiguracionGlobal.confimacionEliminar == undefined) {
+            objConfiguracionGlobal.confimacionEliminar = "Desea eliminar el registro?"
+        }
+        Confirmacion(undefined, objConfiguracionGlobal.confimacionEliminar, function () {
+            fetchGet(objConfiguracionGlobal.urlEliminar + "/?" + objConfiguracionGlobal.nombreParametroEliminar + "=" + id, "text", function (data) {
+                if (data == "1") {
+                    Exito("Se elimino correctamente");
+                    // listarTipoAdministracion();
+                    fetchGet(objConfiguracionGlobal.url, "json", function (rpta) {
+                        document.getElementById(objConfiguracionGlobal.divContenedorTabla).innerHTML = generarTabla(rpta)
+                    })
+                } else Incorrecto();
+            });
+        });
+    }
 }
 
 function CallbackEditar(id) {
@@ -636,6 +671,7 @@ function CallbackEditar(id) {
 }
 
 var objBusquedaCombos = [];
+var idradios = [];
 function ConstruirFormulario(objFormulario, tipo = "") {
     var contenido = "";
     var formulario = objFormulario.formulario;
@@ -654,7 +690,7 @@ function ConstruirFormulario(objFormulario, tipo = "") {
             //{class: "col-md-6", label: "Id medicamento", name: "iidmedicamento", type:"number", readonly:false}
             objetoActual = elemento[j]
             if (objetoActual.class == undefined) objetoActual.class = "col-md-6"
-            if (objetoActual.type == undefined) objetoActual.type = text
+            if (objetoActual.type == undefined) objetoActual.type = "text"
             if (objetoActual.readonly == undefined) objetoActual.readonly = false
             if (objetoActual.label == undefined) objetoActual.label = ""
             if (objetoActual.name == undefined) objetoActual.name = ""
@@ -663,22 +699,44 @@ function ConstruirFormulario(objFormulario, tipo = "") {
             contenido += `<div class="${objetoActual.class}">`;
             contenido += `<label>${objetoActual.label}</label>`;
             if (objetoActual.type == "text" || objetoActual.type == "number") {
-                contenido += `<input type="${objetoActual.type}" class="form-control ${objetoActual.classControl}" name="${objetoActual.name}"/>`;
+
+                contenido += `
+                      <input type="${objetoActual.type}" class="form-control ${objetoActual.classControl}"
+                              name="${objetoActual.name}" />
+                  `;
+
             } else if (objetoActual.type == "textarea") {
 
+                contenido += `
+                    <textarea name="${objetoActual.name}" class="form-control ${objetoActual.classControl}" ></textarea>
+                `;
+
             } else if (objetoActual.type == "combobox") {
-                contenido += `<select class="form-control ${objetoActual.classControl}" name="${objetoActual.name}" id="${objetoActual.id}">
-                              </select>`;
+                contenido += `
+                           <select id="${objetoActual.id}" class="form-control ${objetoActual.classControl}" name="${objetoActual.name}">
+                             </select>
+                    `;
                 objBusquedaCombos.push(objetoActual);
+            } else if (objetoActual.type == "radio") {
+                contenido += "<br />"
+                for (var z = 0; z < objetoActual.labels.length; z++) {
+                    contenido += `
+                       <input type="${objetoActual.type}" ${objetoActual.ids[z] == objetoActual.checked ? "checked" : ""} 
+                id="${objetoActual.ids[z]}"
+                         name="${objetoActual.name}" value="${objetoActual.values[z]}" /> <label>${objetoActual.labels[z]}</label>
+                     `;
+                }
+                idradios.push(objetoActual.checked);
             }
             contenido += `</div>`;
         }
         contenido += "</div>";
+
     }
     contenido += `</form>`;
     if (tipo == "busqueda") {
         contenido += ` <button class="btn btn-primary" onclick="BuscarGenericoBusqueda('${objFormulario.idformulario}')">Buscar</button>
-                       <button class="btn btn-danger" onclick="LimpiarGenericoBusqueda('${objFormulario.idformulario}')" >Limpiar</button>`
+        <button class="btn btn-danger" onclick="LimpiarGenericoBusqueda('${objFormulario.idformulario}')" >Limpiar</button>`
     }
     contenido += `</fieldset>`
     return contenido;

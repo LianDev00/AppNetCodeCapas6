@@ -15,13 +15,12 @@ function listarLaboratorio() {
             [
                 {
                     // div
-                    type: "text",
                     class: "col-md-6",
                     label: "Nombre",
                     name: "nombre",
                 },
                 {
-                    type: "text",
+                    type: "textarea",
                     class: "col-md-6",
                     label: "Direccion",
                     name: "direccion",
@@ -31,7 +30,6 @@ function listarLaboratorio() {
             [
                 {
                     // div
-                    type: "text",
                     class: "col-md-12",
                     label: "Contacto",
                     name: "personacontacto",
